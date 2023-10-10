@@ -1,0 +1,37 @@
+/* roster.component.css */
+
+/* Center the header */
+h1 {
+  text-align: center;
+}
+
+/* Style the table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid #ccc;
+}
+
+/* Style table headers */
+th {
+  background-color: #f2f2f2;
+}
+
+/* Center text in table cells */
+td, th {
+  text-align: center;
+  padding: 10px;
+}
+
+/* Style links in the table */
+a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+a:hover {
+  text-decoration: underline;
+}

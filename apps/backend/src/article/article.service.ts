@@ -72,6 +72,19 @@ export class ArticleService {
     return { articles: articles.map((a) => a.toJSON(user!)), articlesCount };
   }
 
+  async findAllWithoutFilter(): Promise<IArticlesRO> {
+    
+    const qb = this.articleRepository.createQueryBuilder('a').select('a.*').leftJoinAndSelect('a.author', 'u');
+
+    qb.orderBy({ createdAt: QueryOrder.DESC });
+    const res = await qb.clone().count('id', true).execute('get');
+    const articlesCount = res.count;
+
+    const articles = await qb.getResult();
+
+    return { articles: articles.map((a) => a.toJSONWithoutUser(a.author)), articlesCount };
+  }
+
   async findFeed(userId: number, query: Record<string, string>): Promise<IArticlesRO> {
     const user = userId
       ? await this.userRepository.findOne(userId, { populate: ['followers', 'favorites'] })

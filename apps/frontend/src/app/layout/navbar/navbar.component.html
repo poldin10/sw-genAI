@@ -8,6 +8,10 @@
         <a class="nav-link" routerLink="/">Home</a>
       </li>
       <li class="nav-item">
+        <!-- Add "active" class when you're on that page" -->
+        <a class="nav-link" routerLink="/roster">Roster</a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" routerLink="/login" routerLinkActive="active">Sign in</a>
       </li>
       <li class="nav-item">
@@ -25,6 +29,16 @@
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: true }"
           >Home</a
+        >
+      </li>
+      <li class="nav-item">
+        <!-- Add "active" class when you're on that page" -->
+        <a
+          class="nav-link active"
+          [routerLink]="['/roster']"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Roster</a
         >
       </li>
       <li class="nav-item">

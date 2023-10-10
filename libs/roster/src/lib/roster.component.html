@@ -1,0 +1,24 @@
+<div class="roster-page">
+  <h1>Conduit Roster</h1>
+  <div *ngIf="authors.length > 0">
+  <table>
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Articles Authored</th>
+        <th>Likes Received</th>
+        <th>Date of First Article</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Use *ngFor to iterate through the list of authors -->
+      <tr *ngFor="let author of authors">
+        <td><a (click)="navigateToProfile(author.username)">{{ author.username }}</a></td>
+        <td>{{ author.articlesAuthored }}</td>
+        <td>{{ author.likesReceived }}</td>
+        <td>{{ author.dateOfFirstArticle | date:'MMM d, y' || 'N/A' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>

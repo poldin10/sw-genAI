@@ -64,6 +64,13 @@ export class Article {
 
     return o;
   }
+
+  toJSONWithoutUser(user: User) {
+    const o = wrap<Article>(this).toObject() as ArticleDTO;
+    o.author = this.author.toJSONWithoutUser(user);
+
+    return o;
+  }
 }
 
 export interface ArticleDTO extends EntityDTO<Article> {

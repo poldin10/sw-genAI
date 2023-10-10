@@ -70,6 +70,12 @@ export class User {
 
     return o;
   }
+
+  toJSONWithoutUser(user: User) {
+    const o = wrap<User>(this).toObject() as UserDTO;
+    o.username = user.username;
+    return o;
+  }
 }
 
 interface UserDTO extends EntityDTO<User> {

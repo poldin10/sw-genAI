@@ -18,6 +18,13 @@ export class ArticleController {
     return this.articleService.findAll(+user, query);
   }
 
+  @ApiOperation({ summary: 'Get all articles without user filter' })
+  @ApiResponse({ status: 200, description: 'Return all articles.' })
+  @Get('all-articles')
+  async findAllWithoutFilters(): Promise<IArticlesRO> {
+    return this.articleService.findAllWithoutFilter();
+  }
+
   @ApiOperation({ summary: 'Get article feed' })
   @ApiResponse({ status: 200, description: 'Return article feed.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
