@@ -8,6 +8,7 @@ import { Article } from './article.entity';
 import { IArticleRO, IArticlesRO, ICommentsRO } from './article.interface';
 import { Comment } from './comment.entity';
 import { CreateArticleDto, CreateCommentDto } from './dto';
+import { Tag } from '../tag/tag.entity';
 
 @Injectable()
 export class ArticleService {
@@ -19,6 +20,8 @@ export class ArticleService {
     private readonly commentRepository: EntityRepository<Comment>,
     @InjectRepository(User)
     private readonly userRepository: EntityRepository<User>,
+    @InjectRepository(Tag)
+    private readonly tagRepository: EntityRepository<Tag>,
   ) {}
 
   async findAll(userId: number, query: Record<string, string>): Promise<IArticlesRO> {
@@ -154,7 +157,19 @@ export class ArticleService {
       { populate: ['followers', 'favorites', 'articles'] },
     );
     const article = new Article(user!, dto.title, dto.description, dto.body);
-    article.tagList.push(...dto.tagList);
+    article.tagList.push(...dto.tagList.split(',').map(tag => tag.trim()));
+    for (const tagText of article.tagList) {
+      let tag = await this.tagRepository.findOne({ tag: tagText });
+  
+      if (!tag) {
+        // Create a new tag entity
+        tag = new Tag();
+        tag.tag = tagText;
+  
+        // Save the new tag to the database
+        await this.em.persist(tag).flush();
+      }  
+    }
     user?.articles.add(article);
     await this.em.flush();
 
@@ -167,6 +182,24 @@ export class ArticleService {
       { populate: ['followers', 'favorites', 'articles'] },
     );
     const article = await this.articleRepository.findOne({ slug }, { populate: ['author'] });
+    if (articleData.tagList && !Array.isArray(articleData.tagList)) {
+      articleData.tagList = articleData.tagList.split(',').map((tag: string) => tag.trim());
+    }
+    if (articleData.createdAt) {
+      articleData.createdAt = article?.createdAt;
+    }
+    for (const tagText of articleData.tagList) {
+      let tag = await this.tagRepository.findOne({ tag: tagText });
+  
+      if (!tag) {
+        // Create a new tag entity
+        tag = new Tag();
+        tag.tag = tagText;
+  
+        // Save the new tag to the database
+        await this.em.persist(tag).flush();
+      }  
+    }
     wrap(article).assign(articleData);
     await this.em.flush();
 

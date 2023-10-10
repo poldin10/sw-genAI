@@ -31,7 +31,7 @@ export class Article {
   @Property()
   body = '';
 
-  @Property({ type: 'date' })
+  @Property({ type: 'date' , onCreate: () => new Date() })
   createdAt = new Date();
 
   @Property({ type: 'date', onUpdate: () => new Date() })
