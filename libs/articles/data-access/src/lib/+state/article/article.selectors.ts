@@ -3,6 +3,7 @@ import { articleFeature } from './article.reducer';
 
 export const { selectArticleState, selectComments, selectData, selectLoaded, selectLoading } = articleFeature;
 export const getAuthorUsername = createSelector(selectData, (data) => data.author.username);
+export const getCoAuthorUsername = createSelector(selectData, (data) => data.coAuthorsUsernames?.map((coAuth: any) => coAuth?.username));
 
 export const articleQuery = {
   selectArticleState,
@@ -11,4 +12,5 @@ export const articleQuery = {
   selectLoaded,
   selectLoading,
   getAuthorUsername,
+  getCoAuthorUsername
 };

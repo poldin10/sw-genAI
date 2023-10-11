@@ -69,7 +69,9 @@ export class ArticleService {
 
     const articles = await qb.getResult();
 
-    return { articles: articles.map((a) => a.toJSON(user!)), articlesCount };
+    const allUsers = (await this.userRepository.findAll()).map(user => user);
+
+    return { articles: articles.map((a) => a.toJSONWithCoAuthors(user!,allUsers)), articlesCount };
   }
 
   async findAllWithoutFilter(): Promise<IArticlesRO> {
@@ -100,7 +102,9 @@ export class ArticleService {
     );
 
     console.log('findFeed', { articles: res[0], articlesCount: res[1] });
-    return { articles: res[0].map((a) => a.toJSON(user!)), articlesCount: res[1] };
+    const allUsers = (await this.userRepository.findAll()).map(user => user);
+
+    return { articles: res[0].map((a) => a.toJSONWithCoAuthors(user!,allUsers)), articlesCount: res[1] };
   }
 
   async findOne(userId: number, where: Partial<Article>): Promise<IArticleRO> {
@@ -108,7 +112,9 @@ export class ArticleService {
       ? await this.userRepository.findOneOrFail(userId, { populate: ['followers', 'favorites'] })
       : undefined;
     const article = await this.articleRepository.findOne(where, { populate: ['author'] });
-    return { article: article && article.toJSON(user) } as IArticleRO;
+    const allUsers = (await this.userRepository.findAll()).map(user => user);
+
+    return { article: article && article.toJSONWithCoAuthors(user, allUsers) } as IArticleRO;
   }
 
   async addComment(userId: number, slug: string, dto: CreateCommentDto) {
@@ -170,7 +176,7 @@ export class ArticleService {
       { populate: ['followers', 'favorites', 'articles'] },
     );
     const article = new Article(user!, dto.title, dto.description, dto.body);
-    article.tagList.push(...dto.tagList.split(',').map(tag => tag.trim()));
+    article.tagList?.push(...dto.tagList.split(',').map(tag => tag.trim()));
     for (const tagText of article.tagList) {
       let tag = await this.tagRepository.findOne({ tag: tagText });
   
@@ -197,6 +203,9 @@ export class ArticleService {
     const article = await this.articleRepository.findOne({ slug }, { populate: ['author'] });
     if (articleData.tagList && !Array.isArray(articleData.tagList)) {
       articleData.tagList = articleData.tagList.split(',').map((tag: string) => tag.trim());
+    }
+    if (articleData.coAuthors && !Array.isArray(articleData.coAuthors)) {
+      articleData.coAuthors = articleData.coAuthors.split(',').map((coAuthor: string) => coAuthor.trim());
     }
     if (articleData.createdAt) {
       articleData.createdAt = article?.createdAt;

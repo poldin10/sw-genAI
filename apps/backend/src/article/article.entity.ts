@@ -40,6 +40,9 @@ export class Article {
   @Property({ type: ArrayType })
   tagList: string[] = [];
 
+  @Property({ type: ArrayType })
+  coAuthors?: string[] = [];
+
   @ManyToOne(() => User)
   author: User;
 
@@ -65,6 +68,15 @@ export class Article {
     return o;
   }
 
+  toJSONWithCoAuthors(user?: User, coAuthors?: User[]) {
+    const o = wrap<Article>(this).toObject() as ArticleDTO;
+    o.favorited = user && user.favorites.isInitialized() ? user.favorites.contains(this) : false;
+    o.author = this.author.toJSON(user);
+    o.coAuthorsUsernames = coAuthors?.filter(user => o.coAuthors?.includes(user.email));
+
+    return o;
+  }
+
   toJSONWithoutUser(user: User) {
     const o = wrap<Article>(this).toObject() as ArticleDTO;
     o.author = this.author.toJSONWithoutUser(user);
@@ -74,5 +86,6 @@ export class Article {
 }
 
 export interface ArticleDTO extends EntityDTO<Article> {
+  coAuthorsUsernames?: any;
   favorited?: boolean;
 }

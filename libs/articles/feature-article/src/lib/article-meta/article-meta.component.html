@@ -46,4 +46,43 @@
       <span class="counter">({{ article.favoritesCount }})</span>
     </button>
   </span>
+
+  <ng-container *ngFor="let coAuthor of article.coAuthorsUsernames"> 
+  <br><br>
+    <a [routerLink]="['/profile',  coAuthor.username]">
+      <img [src]="coAuthor.image" />
+    </a>
+    <div class="info">
+      <a class="author" [routerLink]="['/profile', article.author.username]">
+        {{  coAuthor.username }}
+      </a>
+      <span class="date">{{ article.createdAt | date : 'longDate' }}</span>
+    </div>
+  
+    <span [hidden]="!canModify">
+      <a class="btn btn-sm btn-outline-secondary" [routerLink]="['/editor', article.slug]">
+        <i class="ion-edit"></i> Edit Article
+      </a>
+  
+      <button class="btn btn-sm btn-outline-danger" (click)="deleteArticle()">
+        <i class="ion-trash-a"></i> Delete Article
+      </button>
+    </span>
+  
+    <span [hidden]="canModify">
+      <button
+        class="btn btn-sm action-btn"
+        [ngClass]="{
+          'btn-outline-secondary': !article.author.following,
+          'btn-secondary': article.author.following
+        }"
+        (click)="toggleFollow()"
+      >
+        <i class="ion-plus-round"></i>
+        &nbsp; {{ coAuthor.following ? 'Unfollow' : 'Follow' }}
+        {{ coAuthor.username }}
+      </button>
+      &nbsp;&nbsp;
+    </span>
+  </ng-container>
 </div>
